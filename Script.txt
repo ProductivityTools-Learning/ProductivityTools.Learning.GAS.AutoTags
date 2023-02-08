@@ -3,10 +3,66 @@ function createTagsFromSubject() {
   for(var i=0;i<threads.length;i++){
   var subject=threads[i].getMessages()[0].getSubject()
     Logger.log(subject)
+    createLabels(subject)
+  }
+  //createLabels("pawel ma kota")
+  //listLabels();
+  //RemoveLabels();
+}
+
+function RemoveLabels()
+{
+  var labels=GmailApp.getUserLabels();
+  for(var i=0;i<labels.length;i++)
+  {
+    var name=labels[i].getName()
+    if (name.startsWith("AutoContainer"))
+    {
+      GmailApp.deleteLabel(labels[i]);
+    }
   }
 }
 
-function createTags(subject)
+function createLabels(subject)
 {
-GmailApp.
+  createLabelSafe("AutoContainer");
+  var words=subject.split(" ");
+  for(var i=0;i<words.length;i++)
+  {
+   // Logger.log(words[i]);
+    createLabel(words[i])
+  }
 }
+
+function createLabel(word)
+{
+  word=word.replace("/","").replace("|","").replace(":","").replace("\"","").replace("(","").replace(")","")
+  if (word!=null && word!="")
+  {
+  var finalLabel="AutoContainer/"+word;
+  createLabelSafe(finalLabel)
+  }
+}
+
+function createLabelSafe(word)
+{
+  Logger.log(word);
+  if (word=="/") return
+  if (word==" ") return
+  
+  var label=GmailApp.getUserLabelByName(word)
+  if (label==null)
+  {
+    GmailApp.createLabel(word)
+  }
+}
+
+function listLabels()
+{
+  var labels=GmailApp.getUserLabels();
+  for(var i=0;i<labels.length;i++)
+  {
+    Logger.log(labels[i].getName());
+  }
+}
+
